@@ -6,6 +6,8 @@ var posts = require('./data/posts.json');
 
 var postArray = [];
 var categoriesArray = [];
+
+//Load data to array
 module.exports.initialize = () => {
     let promise = new Promise((resolve, rejects) => {
         try {
@@ -26,6 +28,7 @@ module.exports.initialize = () => {
     return promise;
 }
 
+//get Post and Category Array
 module.exports.getAllPosts = () => {
     let promise = new Promise((resolve, rejects) => {
        if(postArray.length === 0){
@@ -68,4 +71,51 @@ module.exports.getCategories = () => {
         }  
      })
      return promise;
+}
+
+//Add a new post
+module.exports.addPost = (postData) => {
+    let promise = new Promise((resolve, rejects) => {
+        typeof postData.published === "undefined" ? postData.published = false : postData.published = true;
+        postData.category = parseInt(postData.category, 10);
+        postData.id = postArray.length + 1;
+        postArray.push(postData);
+        
+        resolve (postArray);
+    })
+    return promise;
+}
+
+//Query
+module.exports.getPostsByCategory = (category) => {
+    let promise = new Promise((resolve, rejects) => {
+        let post_Cate = postArray.filter(post => post.category == category)
+        if (post_Cate.length === 0) {
+            rejects({message : "no results returned"})
+        }
+        resolve (post_Cate);
+    })
+    return promise;
+}
+
+module.exports.getPostById = (id) => {
+    let promise = new Promise((resolve, rejects) => {
+        let post_id = postArray.filter(post => post.id == id)
+        if (post_id.length === 0) {
+            rejects({message : "no results returned"})
+        }
+        resolve (post_id);
+    })
+    return promise;
+}
+
+module.exports.getPostsByMinDate = (minDateStr) => {
+    let promise = new Promise((resolve, rejects) => {
+        let postDateSearch = postArray.filter(post => new Date(post.postDate) >= new Date(minDateStr))
+        if (postDateSearch.length === 0) {
+            rejects({message : "no results returned"})
+        }
+        resolve (postDateSearch);
+    })
+    return promise;
 }
