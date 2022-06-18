@@ -127,7 +127,7 @@ app.get('/posts/add',(req,res) => {
     res.sendFile(path.join(__dirname+'/views/addPost.html'));
 });
 
-app.get('/posts/:value', (req,res) => {
+app.get('/post/:value', (req,res) => {
     blog.getPostById(req.params.value)
         .then((data) => {
             res.json({data});
