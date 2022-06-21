@@ -16,9 +16,14 @@ const multer = require("multer");
 const cloudinary = require('cloudinary').v2
 const streamifier = require('streamifier')
 
+const exphbs = require('express-handlebars');
+
 const blog = require('./blog-service');
 
 const app = express();
+
+app.engine('.hbs', exphbs.engine({ extname: '.hbs' }));
+app.set('view engine', '.hbs');
 
 cloudinary.config({
     cloud_name: 'ducphongma',
@@ -35,7 +40,7 @@ app.get("/", (req, res) => {
 });
 
 app.get('/about',(req,res) => {
-    res.sendFile(path.join(__dirname+'/views/about.html'));
+    res.render("about");
 });
 
 
