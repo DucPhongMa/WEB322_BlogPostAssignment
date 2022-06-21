@@ -22,7 +22,25 @@ const blog = require('./blog-service');
 
 const app = express();
 
-app.engine('.hbs', exphbs.engine({ extname: '.hbs' }));
+app.engine('.hbs', exphbs.engine({ 
+    extname: '.hbs',
+    helpers: { 
+        navLink: function(url, options){
+            return '<li' + 
+                ((url == app.locals.activeRoute) ? ' class="active" ' : '') + 
+                '><a href="' + url + '">' + options.fn(this) + '</a></li>';
+        },
+        equal: function (lvalue, rvalue, options) {
+            if (arguments.length < 3)
+                throw new Error("Handlebars Helper equal needs 2 parameters");
+            if (lvalue != rvalue) {
+                return options.inverse(this);
+            } else {
+                return options.fn(this);
+            }
+        }        
+    }
+ }));
 app.set('view engine', '.hbs');
 
 cloudinary.config({
@@ -32,9 +50,18 @@ cloudinary.config({
     secure: true
 });
 
+
 app.use(express.static('public'));
+app.use(function(req,res,next){
+    let route = req.path.substring(1);
+    app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
+    app.locals.viewingCategory = req.query.category;
+    next();
+});
 
 // setup a 'route' to listen on the default url path
+
+
 app.get("/", (req, res) => {
     res.redirect("/about");
 });
@@ -128,7 +155,7 @@ app.post('/posts/add',  upload.single("featureImage"), (req,res) => {
 });
 
 app.get('/posts/add',(req,res) => {
-    res.sendFile(path.join(__dirname+'/views/addPost.html'));
+    res.render("addPost")
 });
 
 app.get('/post/:value', (req,res) => {
