@@ -43,7 +43,6 @@ app.get('/about',(req,res) => {
     res.render("about");
 });
 
-
 app.get('/blog',(req,res) => {
     blog.getPublishedPosts()
          .then((data) => {
