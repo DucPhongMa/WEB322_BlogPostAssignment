@@ -79,6 +79,15 @@ module.exports.addPost = (postData) => {
         typeof postData.published === "undefined" ? postData.published = false : postData.published = true;
         postData.category = parseInt(postData.category, 10);
         postData.id = postArray.length + 1;
+
+        //get current date
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        let yyyy = today.getFullYear();
+        
+        today = yyyy + '-' + mm + '-' + dd;
+        postData.postDate = today;
         postArray.push(postData);
         
         resolve (postArray);
@@ -118,4 +127,23 @@ module.exports.getPostsByMinDate = (minDateStr) => {
         resolve (postDateSearch);
     })
     return promise;
+}
+
+module.exports.getPublishedPostsByCategory = (category) => {
+    let promise = new Promise((resolve, rejects) => {
+        if(postArray.length === 0){
+            rejects({message : "no results returned"})
+        }
+        else{
+            let publishedPosts = []
+            postArray.forEach(post => {
+                if(post.published == true && post.category == category){
+                    publishedPosts.push(post);
+                }
+            })
+ 
+            resolve(publishedPosts)
+        }
+     })
+     return promise;
 }
