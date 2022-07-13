@@ -23,6 +23,8 @@ const blog = require('./blog-service');
 
 const app = express();
 
+app.use(express.urlencoded({extended: true}));
+
 app.engine('.hbs', exphbs.engine({ 
     extname: '.hbs',
     helpers: { 
@@ -43,10 +45,17 @@ app.engine('.hbs', exphbs.engine({
         },
         safeHTML: function(context){
             return stripJs(context);
-        }        
+        },
+        formatDate: function(dateObj){
+            let year = dateObj.getFullYear();
+            let month = (dateObj.getMonth() + 1).toString();
+            let day = dateObj.getDate().toString();
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2,'0')}`;
+        }           
     }
  }));
 app.set('view engine', '.hbs');
+
 
 cloudinary.config({
     cloud_name: 'ducphongma',
@@ -203,23 +212,16 @@ app.get('/posts', (req,res) => {
     else {
         blog.getAllPosts()
          .then((data) => {
-            res.render("posts", {posts: data});
+            if(data.length > 0)
+                 res.render("posts", {posts: data});
+            else
+                 res.render("posts",{ message: "no results" });
          })
          .catch(() => {
             res.render("posts", {message: "no results"});
          })
     }
     
-});
-
-app.get('/categories',(req,res) => {
-    blog.getCategories()
-     .then((data) => {
-        res.render("categories", {categories: data});
-     })
-     .catch(() => {
-        res.render("posts", {message: "no results"});
-     })
 });
 
 const upload = multer();
@@ -255,7 +257,9 @@ app.post('/posts/add',  upload.single("featureImage"), (req,res) => {
 });
 
 app.get('/posts/add',(req,res) => {
-    res.render("addPost")
+    blog.getCategories()
+    .then(data => res.render("addPost", {categories: data}))
+    .catch(err => res.render("addPost", {categories: []}));
 });
 
 app.get('/post/:value', (req,res) => {
@@ -269,6 +273,54 @@ app.get('/post/:value', (req,res) => {
     
 });
 
+// Category
+app.get('/categories',(req,res) => {
+    blog.getCategories()
+     .then((data) => {
+        if(data.length > 0)
+            res.render("categories", {categories: data});
+        else
+            res.render("categories", {message: "no results"});
+     })
+     .catch(() => {
+        res.render("categories", {message: "no results"});
+     })
+});
+
+app.get('/categories/add',(req,res) => {
+    res.render("addCategory");
+});
+
+app.post('/categories/add',(req,res) => {
+    blog.addCategory(req.body)
+            .then(() => {
+            res.redirect("/categories"); });
+});
+
+app.get('/categories/delete/:id',(req,res) => {
+        blog.deleteCategoryById(req.params.id)
+        .then(()=>{
+            res.redirect("/categories");
+          }).catch((err)=>{
+                  res.status(500).render("categories", {
+                          errorMessage: "Unable to Remove Category / Category Not Found"
+                  });
+          });
+});
+
+app.get('/posts/delete/:id',(req,res) => {
+        blog.deletePostById(req.params.id)
+        .then(()=>{
+            res.redirect("/posts");
+          }).catch((err)=>{
+                  res.status(500).render("posts", {
+                          errorMessage: "Unable to Remove Post / Category Not Post"
+                  });
+          });
+});
+
+
+// Render error404 page
 app.use((req, res) => {
     res.render("error404");
 });
