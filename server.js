@@ -115,10 +115,7 @@ app.get('/blog/:id', async (req, res) => {
 
     try{
         // Obtain the post by "id"
-        viewData.post = await blog.getPostById(req.params.id);
-        let singlePost = viewData.post[0];
-        viewData.post = singlePost;
-       
+        viewData.post = await blog.getPostById(req.params.id);   
     }catch(err){
         viewData.message = "no results"; 
     }
@@ -187,8 +184,6 @@ app.get('/blog', async (req, res) => {
 });
 
 
-
-
 //Display and Query Post 
 app.get('/posts', (req,res) => {
     if(req.query.category){
@@ -249,9 +244,11 @@ app.post('/posts/add',  upload.single("featureImage"), (req,res) => {
         req.body.featureImage = uploaded.url;
 
         // TODO: Process the req.body and add it as a new Blog Post before redirecting to /posts
-        blog.addPost(req.body)
-                .then(() => {
-                res.redirect("/posts");
+        console.log("server: ", req.body);
+        blog.addPost(req.body).then(() => {
+            res.redirect('/posts')
+        }).catch((error) => {
+            res.status(500).send(error)
         });
     });
 });
@@ -314,7 +311,7 @@ app.get('/posts/delete/:id',(req,res) => {
             res.redirect("/posts");
           }).catch((err)=>{
                   res.status(500).render("posts", {
-                          errorMessage: "Unable to Remove Post / Category Not Post"
+                          errorMessage: "Unable to Remove Post / Post Not Found"
                   });
           });
 });

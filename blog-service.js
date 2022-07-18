@@ -13,32 +13,19 @@ var sequelize = new Sequelize('dffq7dq1tme9hf', 'cmztgtnbaqhnip', '672c2c0921ffa
     query: { raw: true }
 });
 
-var Post = sequelize.define('posts', {
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true 
-    },
+var Post = sequelize.define('Post', {
     body: Sequelize.TEXT,
     title: Sequelize.STRING,
     postDate: Sequelize.DATE,
     featureImage: Sequelize.STRING,
     published: Sequelize.BOOLEAN
-},{
-    createdAt: false, 
-    updatedAt: false 
+});
+var Category = sequelize.define('Category', {
+    category: Sequelize.STRING
 });
 
-var Category = sequelize.define('categories', {
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true 
-    },
-    category: Sequelize.STRING,
-});
+Post.belongsTo(Category, {foreignKey: 'category'});
 
-Post.belongsTo(Category, {foreignKey: 'id'});
 
 //Load data to array
 module.exports.initialize = () => {
@@ -92,19 +79,28 @@ module.exports.getCategories = () => {
 
 //Add a new post
 module.exports.addPost = (postData) => {
-    return new Promise((resolve,reject) => {
-        postData.published = postData.published ? true : false;
-        for (var i in postData) {
-            if (postData[i] == "") { postData[i] = null; }
+    return new Promise((resolve, reject) => {
+        postData.published = (postData.published) ? true : false;
+        for (prop in postData) {
+            if(postData[prop] == ""){
+                postData[prop] = null;
+            }
         }
         postData.postDate = new Date();
-        Post.create(postData)
-        .then(() => {
-            resolve("created Post successfully!!!");
-        }).catch(err => {
+        Post.create({
+            body: postData.body,
+            title: postData.title,
+            postDate: postData.postDate,
+            featureImage: postData.featureImage,
+            published: postData.published,
+            category: postData.category
+        }).then(function (post) {
+            resolve(post)
+        }).catch(function(){
             reject("unable to create post");
         });
-    })
+    });
+    
 }
 
 //Query
