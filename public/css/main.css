@@ -1,0 +1,40 @@
+body{
+    background-color:#131313;
+}
+a{
+    color:white;
+}
+
+a:hover{
+    color: aqua;
+}
+.navbar-css{
+    background-color: #4c545a;
+}
+
+.navbar-default .navbar-nav>li>a,
+.navbar-default .navbar-brand
+{
+    color:#fff;
+}
+
+.navbar-default .navbar-nav>li>a:hover{
+    color:#888;
+}
+.navbar-default .navbar-brand:hover{
+    color:#888;
+    cursor: pointer;
+}
+.container.container-color{
+    color:#fff;
+    background-color: #29292c;
+    padding: 20px;
+}
+
+.list-group-item{
+    background-color: #555;
+}
+
+a.list-group-item{
+    color:white;
+}

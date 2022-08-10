@@ -2,7 +2,7 @@
     <section class="main col-md-9">
         <article>
             {{#if viewData.post }}
-                <h2>{{viewData.post.title}}</h2>
+                <h2 class="text-center">{{viewData.post.title}}</h2>
                 <img src="{{viewData.post.featureImage}}" alt="feature Image" style="width:100%" />
                 <br /><br />
                 {{#safeHTML viewData.post.body}}{{/safeHTML}}
