@@ -1,7 +1,7 @@
 ## Description
 <b>Blog Website</b>: A blogging website in which users can share their experiences and their stories as well as manage their blogs by posting and deleting functionalities.
 
-<b>Technology used</b>: HTML5, CSS3, Bootstrap 4, JavaScript, Node.js, Express.js, MongoDB, PostgreSQL, Handlebars template engine
+<b>Technology used</b>: <i>HTML5, CSS3, Bootstrap 4, JavaScript, Node.js, Express.js, MongoDB, PostgreSQL, Handlebars template engine</i>
 
 ## Getting Started
 
