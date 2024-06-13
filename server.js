@@ -24,7 +24,11 @@ const blog = require('./blog-service');
 
 const authData = require('./auth-service');
 
+
 const app = express();
+
+app.set('views', __dirname + '/views');
+app.use(express.static(__dirname + '/public'));
 
 app.use(express.urlencoded({extended: true}));
 
