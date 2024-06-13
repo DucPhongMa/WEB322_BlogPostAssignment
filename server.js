@@ -17,6 +17,7 @@ const cloudinary = require('cloudinary').v2
 const streamifier = require('streamifier')
 const stripJs = require('strip-js');
 const clientSessions = require("client-sessions");
+require('pg'); // explicitly require the "pg" module
 
 const exphbs = require('express-handlebars');
 
@@ -31,6 +32,8 @@ app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 
 app.use(express.urlencoded({extended: true}));
+const Sequelize = require('sequelize');
+
 
 app.use(clientSessions({
     cookieName: "session", // this is the object name that will be added to 'req'
